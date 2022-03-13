@@ -6,7 +6,7 @@
 		<groupId>me.candybox</groupId>
 		<artifactId>candybox</artifactId>
 		<version>0.0.1</version>
-		<relativePath/>  <!-- lookup parent from repository  -->
+		<!-- <relativePath/>  lookup parent from repository  -->
 	</parent>
 	<groupId>me.candybox</groupId>
 	<artifactId>demo</artifactId>

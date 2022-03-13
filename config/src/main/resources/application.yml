@@ -1,0 +1,33 @@
+server:
+  port: 8002
+  servlet:
+    context-path: /
+    encoding:
+      charset: utf-8
+
+
+spring:
+  application:
+    name: config
+  cloud:
+    config:
+      server:
+        native:
+          search-locations:
+          - classpath:/config/
+  profiles:
+    active:
+    - native
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8000/eureka/
