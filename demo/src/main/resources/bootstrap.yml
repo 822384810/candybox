@@ -8,7 +8,7 @@ spring:
         service-id: config
         enabled: true
       profile: dev
-      name: demo
+      name: candybox,demo
       label: v1
 
 
