@@ -9,5 +9,17 @@ spring:
   application:
     name: demo
 
-
+  redis:
+    host: 192.168.3.202
+    port: 6379
+    password: ""
+    jedis:
+      pool:
+        enabled: true
+        max-active: 10
+        max-idle: 3
+        max-wait: 10000
+        min-idle: 1
+        
+        
 

@@ -12,6 +12,8 @@
 
 5.Api文档：Swagger3
 
+6.缓存：Redis（使用时注意修改配置文件中的主机IP，端口、密码）
+
 # 开源协议
 APACHE LICENSE, VERSION 2.0
 
