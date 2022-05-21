@@ -1,0 +1,26 @@
+
+spring:
+  application:
+    name: candybox-user
+  cloud:
+    config:
+      discovery:
+        service-id: config
+        enabled: false
+      profile: dev
+      name: candybox
+      label: v1
+      enabled: false
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}:${spring.application.name}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://127.0.0.1:8000/eureka/

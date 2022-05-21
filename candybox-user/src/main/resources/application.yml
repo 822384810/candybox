@@ -1,0 +1,59 @@
+server:
+  port: 8012
+  servlet:
+    context-path: /
+    encoding:
+      charset: utf-8
+
+
+
+spring:
+  application:
+    name: candybox-user
+
+  redis:
+    host: 192.168.3.202
+    port: 6379
+    password: ""
+    jedis:
+      pool:
+        enabled: true
+        max-active: 10
+        max-idle: 3
+        max-wait: 10000
+        min-idle: 1
+        
+        
+  datasource:
+    name: demo
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/candybox?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&useSSL=true&allowMultiQueries=true
+      username: candybox
+      password: candybox
+      max-active: 20
+      initial-size: 1
+      max-wait: 6000
+      min-idle: 1
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      async-init: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+      
+swagger:
+  enable: true
+      
+logging:
+  level:
+    me: debug
+
+

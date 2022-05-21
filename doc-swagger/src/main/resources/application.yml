@@ -1,0 +1,7 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+swagger:
+  enable: true
