@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.hutool.core.util.StrUtil;
+import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.core.model.BaseModel;
 import me.candybox.core.service.CbDataService;
 import me.candybox.user.mapper.UserRoleResRelationMapper;
@@ -20,8 +19,11 @@ import me.candybox.user.model.UserRoleResRelation;
 import me.candybox.user.vo.UserResInfoTreeVO;
 import me.candybox.user.vo.UserRoleResRelationVO;
 
+/**
+ * 资源业务类
+ */
 @Service
-public class ResRoleService {
+public class ResService {
 
     @Autowired
     private UserRoleResRelationMapper userRoleResRelationMapper;
@@ -49,12 +51,16 @@ public class ResRoleService {
         queryWrapper.eq("status", 1);
         if(userRoleResRelationVO.isUserRoleResRelCheck()){
             userRoleResRelation.setUpdateTime(new Date());
+            userRoleResRelation.setUpdateUserId(TokenInfoThreadLocal.getTokenInfo().getUserId());
+            userRoleResRelation.setUpdateUserName(TokenInfoThreadLocal.getTokenInfo().getUserName());
             userRoleResRelation.setStatus(0);
             ret = userRoleResRelationMapper.update(userRoleResRelation, queryWrapper);
         }else{
             long count = userRoleResRelationMapper.selectCount(queryWrapper);
             if(count<=0){
                 userRoleResRelation.setCreateTime(new Date());
+                userRoleResRelation.setCreateUserId(TokenInfoThreadLocal.getTokenInfo().getUserId());
+                userRoleResRelation.setCreateUserName(TokenInfoThreadLocal.getTokenInfo().getUserName());
                 userRoleResRelation.setStatus(1);
                 ret = userRoleResRelationMapper.insert(userRoleResRelation);
             }
@@ -83,7 +89,7 @@ public class ResRoleService {
             if("0".equals(userResInfo.getParentId())){
                 UserResInfoTreeVO userResInfoTreeVO = new UserResInfoTreeVO();
                 BeanUtils.copyProperties(item, userResInfoTreeVO);
-                resTree(userResInfoTreeVO,userResInfo.getId(),list);
+                execResTree(userResInfoTreeVO,userResInfo.getId(),list);
                 userResInfoTreeVOs.add(userResInfoTreeVO);
             }
         });
@@ -98,7 +104,7 @@ public class ResRoleService {
      * @param parentId
      * @param list
      */
-    private void resTree(UserResInfoTreeVO userResInfoTreeVO,String parentId,List<BaseModel> list){
+    private void execResTree(UserResInfoTreeVO userResInfoTreeVO,String parentId,List<BaseModel> list){
         List<UserResInfoTreeVO> tUserResInfoTreeVOs = new ArrayList<>();
         list.forEach(item->{
             UserResInfo userResInfo = (UserResInfo)item;
@@ -106,7 +112,7 @@ public class ResRoleService {
                 UserResInfoTreeVO tUserResInfoTreeVO = new UserResInfoTreeVO();
                 BeanUtils.copyProperties(item, tUserResInfoTreeVO);
                 // tUserResInfoTreeVO.setValue(JSON.parseObject("{'id':'"+tUserResInfoTreeVO.getId()+"','name':'"+tUserResInfoTreeVO.getName()+"'}"));
-                resTree(userResInfoTreeVO,userResInfo.getId(),list);
+                execResTree(userResInfoTreeVO,userResInfo.getId(),list);
                 tUserResInfoTreeVOs.add(tUserResInfoTreeVO);
             }
             

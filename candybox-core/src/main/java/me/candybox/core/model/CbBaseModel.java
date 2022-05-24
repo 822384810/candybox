@@ -29,6 +29,6 @@ public abstract class CbBaseModel<T> extends BaseModel<CbBaseModel> {
     @ApiModelProperty(value = "更新用户Id")
     private String updateUserId;
     @ApiModelProperty(value = "数据是否有效,逻辑删除使用 1：有效 0：无效")
-    private int status;
+    private Integer status;
     
 }

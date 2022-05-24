@@ -114,6 +114,11 @@
 			<artifactId>hutool-all</artifactId>
 			<version>5.8.0.M4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15to18</artifactId>
+			<version>1.69</version>
+		  </dependency>
 
 	</dependencies>
 

@@ -9,14 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cn.hutool.core.util.StrUtil;
+import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.user.mapper.UserRoleRelationMapper;
 import me.candybox.user.mapper.UserRoleResRelationMapper;
 import me.candybox.user.model.UserRoleRelation;
 import me.candybox.user.vo.UserRoleRelationVO;
 import me.candybox.user.vo.UserRoleResRelationVO;
 
+/** 
+ * 角色业务类
+*/
+
 @Service
-public class UserRoleService {
+public class RoleService {
     
     @Autowired
     private UserRoleRelationMapper userRoleRelationMapper;
@@ -76,12 +81,16 @@ public class UserRoleService {
         queryWrapper.eq("status", 1);
         if(userRoleRelationVO.isUserRoleRelCheck()){
             userRoleRelation.setUpdateTime(new Date());
+            userRoleRelation.setUpdateUserId(TokenInfoThreadLocal.getTokenInfo().getUserId());
+            userRoleRelation.setUpdateUserName(TokenInfoThreadLocal.getTokenInfo().getUserName());
             userRoleRelation.setStatus(0);
             ret = userRoleRelationMapper.update(userRoleRelation, queryWrapper);
         }else{
             long count = userRoleRelationMapper.selectCount(queryWrapper);
             if(count<=0){
                 userRoleRelation.setCreateTime(new Date());
+                userRoleRelation.setCreateUserId(TokenInfoThreadLocal.getTokenInfo().getUserId());
+                userRoleRelation.setCreateUserName(TokenInfoThreadLocal.getTokenInfo().getUserName());
                 userRoleRelation.setStatus(1);
                 ret = userRoleRelationMapper.insert(userRoleRelation);
             }

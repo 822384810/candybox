@@ -15,17 +15,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.vo.ResultVO;
-import me.candybox.user.service.UserRoleService;
+import me.candybox.user.service.RoleService;
 import me.candybox.user.vo.UserRoleRelationVO;
 import me.candybox.user.vo.UserRoleResRelationVO;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/user/role/")
-public class UserRoleController {
+public class RoleController {
 
     @Autowired
-    private UserRoleService userRoleService;
+    private RoleService rolesService;
 
 
     @Operation(summary ="用户角色关系")
@@ -35,7 +35,7 @@ public class UserRoleController {
     ,@Parameter(description="角色😊",required = true) @RequestParam(required = true,defaultValue = "") String roleTag
     ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
     ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize){
-        IPage<UserRoleRelationVO> iPage = userRoleService.selectRelationByUser(new Page<UserRoleRelationVO>(pageNo,pageSize), userId,roleName,roleTag);
+        IPage<UserRoleRelationVO> iPage = rolesService.selectRelationByUser(new Page<UserRoleRelationVO>(pageNo,pageSize), userId,roleName,roleTag);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }
@@ -48,7 +48,7 @@ public class UserRoleController {
     ,@Parameter(description="角色😊",required = true) @RequestParam(required = true,defaultValue = "") String roleTag
     ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
     ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize){
-        IPage<UserRoleResRelationVO> iPage = userRoleService.selectRelationByRes(new Page<UserRoleResRelationVO>(pageNo,pageSize), resId,roleName,roleTag);
+        IPage<UserRoleResRelationVO> iPage = rolesService.selectRelationByRes(new Page<UserRoleResRelationVO>(pageNo,pageSize), resId,roleName,roleTag);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }
@@ -58,7 +58,7 @@ public class UserRoleController {
     @RequestMapping(value = "/relation" ,method = {RequestMethod.POST})
     public ResultVO save(@Parameter(description="json格式数据",required = true) @RequestBody(required = true) UserRoleRelationVO userRoleRelationVO){
         ResultVO resultVO = new ResultVO();
-        if(userRoleService.save(userRoleRelationVO)<1){
+        if(rolesService.save(userRoleRelationVO)<1){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }

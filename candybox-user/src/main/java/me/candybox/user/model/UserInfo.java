@@ -53,7 +53,7 @@ public class UserInfo extends CbBaseModel<UserInfo>{
 
     @ApiModelProperty(value = "证件类型")
     @DecimalMax(value = "5",message = "{UserInfo.idType}")
-    private int idType;
+    private Integer idType;
 
     @ApiModelProperty(value = "单位编号")
     @Length(max = 36,message = "{UserInfo.deptId}")
@@ -68,7 +68,7 @@ public class UserInfo extends CbBaseModel<UserInfo>{
     private String lastLoginIp;
     private String lastLoginDev;
     private String lastLoginSource;
-    private long loginCount;
+    private Long loginCount;
 
 
 

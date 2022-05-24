@@ -25,11 +25,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import me.candybox.core.ContextRefreshedListener;
 import me.candybox.core.config.ConstantConfig;
+import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.core.model.BaseModel;
 import me.candybox.core.service.CbDataService;
 import me.candybox.core.utils.JSONObjectUtil;
 import me.candybox.core.utils.ValidatedUtil;
 import me.candybox.core.vo.ResultVO;
+import me.candybox.core.vo.TokenInfoVO;
 
 
 /**
@@ -50,6 +52,10 @@ public class CbDataController {
         if(jsonObject!=null){
             jsonObject.put("status", 1);
             jsonObject.put("createTime", new Date());
+
+            jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+            jsonObject.put("createUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
+
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -75,6 +81,8 @@ public class CbDataController {
         jsonObject.put("id", id);
         jsonObject.put("status", "0");
         jsonObject.put("updateTime", new Date());
+        jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         BaseModel baseModel = (BaseModel) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
@@ -93,6 +101,8 @@ public class CbDataController {
         ResultVO resultVO = new ResultVO();
         jsonObject.put("id", id);
         jsonObject.put("updateTime", new Date());
+        jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         BaseModel baseModel = (BaseModel) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     

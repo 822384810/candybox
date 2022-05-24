@@ -12,18 +12,18 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.vo.ResultVO;
-import me.candybox.user.service.ResRoleService;
+import me.candybox.user.service.ResService;
 import me.candybox.user.vo.UserRoleResRelationVO;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/user/res/")
-public class UserResController {
+public class ResController {
 
     // @Autowired
     // private CbDataService cbDataService;
     @Autowired
-    private ResRoleService resRoleService;
+    private ResService resService;
 
 
     // @Operation(summary ="资源菜单树查询")
@@ -53,7 +53,7 @@ public class UserResController {
     @Operation(summary ="资源菜单树全部查询")
     @GetMapping("/tree/user/all")
     public ResultVO selectTreeByUserAll(){
-        return new ResultVO(resRoleService.selectTreeByUserAll(null));
+        return new ResultVO(resService.selectTreeByUserAll(null));
     }
 
 
@@ -61,7 +61,7 @@ public class UserResController {
     @RequestMapping(value = "/relation" ,method = {RequestMethod.POST})
     public ResultVO save(@Parameter(description="json格式数据",required = true) @RequestBody(required = true) UserRoleResRelationVO userRoleResRelationVO){
         ResultVO resultVO = new ResultVO();
-        if(resRoleService.save(userRoleResRelationVO)<1){
+        if(resService.save(userRoleResRelationVO)<1){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }
