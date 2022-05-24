@@ -30,6 +30,7 @@ import me.candybox.core.annotation.AccessTokenOauth;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.model.BaseModel;
 import me.candybox.core.service.CbDataService;
+import me.candybox.core.utils.HttpUtil;
 import me.candybox.core.utils.JSONObjectUtil;
 import me.candybox.core.utils.RedisUtil;
 import me.candybox.core.utils.ValidatedUtil;
@@ -65,7 +66,7 @@ public class UserController {
             return resultVO;
         }
         //获取登录相关信息
-        loginInfoVo.setLoginIp(req.getRemoteAddr());
+        loginInfoVo.setLoginIp(HttpUtil.getClientIP(req));
         loginInfoVo.setLoginDev(req.getHeader("User-Agent"));
         loginInfoVo.setLoginSource("web");
 
