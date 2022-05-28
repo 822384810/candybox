@@ -1,6 +1,5 @@
 package me.candybox.core.interceptor;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.annotation.AccessTokenOauth;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.config.TokenInfoThreadLocal;
+import me.candybox.core.utils.HttpUtil;
 import me.candybox.core.utils.RedisUtil;
 import me.candybox.core.vo.ResultVO;
 import me.candybox.core.vo.TokenInfoVO;
@@ -49,7 +49,7 @@ public class AccessTokenInterceptor implements HandlerInterceptor{
         }
         ResultVO resultVO = new ResultVO(ConstantConfig.RESULT_STATUS_NO_ACCESSTOKEN, "用户登录已过期，请重新登录");
         response.setCharacterEncoding("utf-8");
-        String accessToken=getCookie(request, ConstantConfig.ACCESS_TOKEN_KEY);
+        String accessToken=HttpUtil.getCookie(request, ConstantConfig.ACCESS_TOKEN_KEY);
         if(accessToken==null){
             accessToken=request.getHeader(ConstantConfig.ACCESS_TOKEN_KEY);
         }
@@ -73,19 +73,5 @@ public class AccessTokenInterceptor implements HandlerInterceptor{
         response.setStatus(401);
         return false;
     }
-
-
-    private String getCookie(HttpServletRequest request,String key){
-        Cookie[] cookies = request.getCookies();
-        if(cookies!=null){
-            for(Cookie cookie : cookies){
-                if(key.equals(cookie.getName())){
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
     
 }

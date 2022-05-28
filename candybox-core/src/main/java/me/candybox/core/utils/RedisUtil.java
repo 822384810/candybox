@@ -59,4 +59,13 @@ public class RedisUtil {
     public boolean expireSeconds(String key,long timeOut){
         return redisTemplate.expire(key,timeOut,TimeUnit.SECONDS);
     }
+
+    /**
+     * 删除key
+     * @param key
+     * @return
+     */
+    public boolean del(String key){
+        return redisTemplate.delete(key);
+    }
 }

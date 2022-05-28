@@ -1,5 +1,6 @@
 package me.candybox.core.utils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 public class HttpUtil {
@@ -23,5 +24,18 @@ public class HttpUtil {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+
+    public static String getCookie(HttpServletRequest request,String key){
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null){
+            for(Cookie cookie : cookies){
+                if(key.equals(cookie.getName())){
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

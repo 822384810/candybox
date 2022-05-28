@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import me.candybox.core.annotation.AccessTokenOauth;
@@ -45,6 +46,26 @@ public class UserController {
     @Autowired
     private RedisUtil redisUtil;
 
+
+    @AccessTokenOauth(value = false)
+    @Operation(summary ="清除token")
+    @RequestMapping(value={"/token"},method = {RequestMethod.DELETE},produces="application/json;charset=UTF-8")
+    public ResultVO clearToken(HttpServletRequest request, HttpServletResponse response){
+        String accessToken=HttpUtil.getCookie(request, ConstantConfig.ACCESS_TOKEN_KEY);
+        if(accessToken==null){
+            accessToken=request.getHeader(ConstantConfig.ACCESS_TOKEN_KEY);
+        }
+        if(accessToken==null){
+            accessToken=request.getParameter(ConstantConfig.ACCESS_TOKEN_KEY);
+        }
+        if(!StrUtil.isBlank(accessToken)){
+            if(redisUtil.hasKey(ConstantConfig.ACCESS_TOKEN_KEY+":"+accessToken)){
+                redisUtil.del(ConstantConfig.ACCESS_TOKEN_KEY+":"+accessToken);
+            }
+        }
+        return new ResultVO();
+    }
+
     @AccessTokenOauth(value = false)
     @Operation(summary ="web登录")
     @PostMapping("/web/login")
@@ -68,7 +89,7 @@ public class UserController {
             cookie.setPath("/");
             rep.addCookie(cookie);
             redisUtil.set(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), JSON.toJSONString(tokenInfoVO));
-            redisUtil.expireSeconds(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), 1*60*60*12);
+            redisUtil.expireSeconds(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), 1*60*60*2);
             resultVO.setData(tokenInfoVO);
             return resultVO;
         }

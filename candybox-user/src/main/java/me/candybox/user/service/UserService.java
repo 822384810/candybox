@@ -70,6 +70,7 @@ public class UserService {
         tokenInfoVO.setUserId(userInfo.getId());
         tokenInfoVO.setUserName(userInfo.getName());
         tokenInfoVO.setTokenId(IdUtil.simpleUUID());
+        tokenInfoVO.setTokenType("user");
         //登录日志
         LogLogin logLogin = new LogLogin();
         BeanUtils.copyProperties(tokenInfoVO, logLogin);

@@ -14,7 +14,7 @@ import me.candybox.user.model.UserResInfo;
 public interface UserResInfoMapper extends BaseMapper<UserResInfo>{
  
     
-    @Select("select * from user_res_info a where a.status=1 and exists ( "
+    @Select("select * from user_res_info a where a.status=1 and a.type=1 and exists ( "
         +" select id from user_role_res_relation b where a.id=b.res_id and b.status=1 "
         +" and exists ( "
         +" select id from user_role_relation  c where b.role_id=c.role_id and c.status=1 and c.user_id=#{userId}"

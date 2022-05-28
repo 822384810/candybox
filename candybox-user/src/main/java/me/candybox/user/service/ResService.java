@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.hutool.core.util.StrUtil;
 import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.user.mapper.UserResInfoMapper;
 import me.candybox.user.mapper.UserRoleResRelationMapper;
@@ -139,14 +140,16 @@ public class ResService {
         userResInfos.forEach(item->{
             if("0".equals(item.getParentId())){
                 UserResInfoChildrenVO userResInfoChildrenVO = new UserResInfoChildrenVO();
-                JSONObject jsonObject = JSON.parseObject(item.getDescript());
                 userResInfoChildrenVO.setLabel(item.getName());
                 userResInfoChildrenVO.setSchemaApi(item.getApiUrl());
-                userResInfoChildrenVO.setIcon(jsonObject.getString("icon"));
-                userResInfoChildrenVO.setUrl(jsonObject.getString("url"));
-                userResInfoChildrenVO.setLink(jsonObject.getString("link"));
-                userResInfoChildrenVO.setIsDefaultPage(jsonObject.getString("default"));
-                userResInfoChildrenVO.setSchema(jsonObject.getString("schema"));
+                if(!StrUtil.isBlank(item.getDescript())){
+                    JSONObject jsonObject = JSON.parseObject(item.getDescript());
+                    userResInfoChildrenVO.setIcon(jsonObject.getString("icon"));
+                    userResInfoChildrenVO.setUrl(jsonObject.getString("url"));
+                    userResInfoChildrenVO.setLink(jsonObject.getString("link"));
+                    userResInfoChildrenVO.setIsDefaultPage(jsonObject.getString("default"));
+                    userResInfoChildrenVO.setSchema(jsonObject.getString("schema"));
+                }
                 userResInfoChildrenVOs.add(userResInfoChildrenVO);
                 execResMenu(userResInfoChildrenVO,item.getId(),userResInfos);
             }
@@ -168,14 +171,16 @@ public class ResService {
         userResInfos.forEach(item->{
             if(parentId.equals(item.getParentId())){
                 UserResInfoChildrenVO userResInfoChildrenVO = new UserResInfoChildrenVO();
-                JSONObject jsonObject = JSON.parseObject(item.getDescript());
                 userResInfoChildrenVO.setLabel(item.getName());
                 userResInfoChildrenVO.setSchemaApi(item.getApiUrl());
-                userResInfoChildrenVO.setIcon(jsonObject.getString("icon"));
-                userResInfoChildrenVO.setUrl(jsonObject.getString("url"));
-                userResInfoChildrenVO.setLink(jsonObject.getString("link"));
-                userResInfoChildrenVO.setIsDefaultPage(jsonObject.getString("default"));
-                userResInfoChildrenVO.setSchema(jsonObject.get("schema"));
+                if(!StrUtil.isBlank(item.getDescript())){
+                    JSONObject jsonObject = JSON.parseObject(item.getDescript());
+                    userResInfoChildrenVO.setIcon(jsonObject.getString("icon"));
+                    userResInfoChildrenVO.setUrl(jsonObject.getString("url"));
+                    userResInfoChildrenVO.setLink(jsonObject.getString("link"));
+                    userResInfoChildrenVO.setIsDefaultPage(jsonObject.getString("default"));
+                    userResInfoChildrenVO.setSchema(jsonObject.get("schema"));
+                }
                 userResInfoChildrenVOs.add(userResInfoChildrenVO);
                 execResMenu(userResInfoChildrenVO,item.getId(),userResInfos);
             }

@@ -18,5 +18,7 @@ public class TokenInfoVO {
     private String deptId;
     @ApiModelProperty(value = "单位名称")
     private String deptName;
+    @ApiModelProperty(value = "token类型")
+    private String tokenType;
 
 }
