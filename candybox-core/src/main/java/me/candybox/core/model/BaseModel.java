@@ -8,6 +8,6 @@ import lombok.Data;
  * model父类
  */
 @Data
-public abstract class BaseModel<T> extends Model<BaseModel> {
+public  class BaseModel<T> extends Model<BaseModel<?>> {
     
 }

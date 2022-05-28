@@ -3,8 +3,6 @@ package me.candybox.user.vo;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-
 import lombok.Data;
 
 @Data

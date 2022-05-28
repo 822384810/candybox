@@ -13,7 +13,7 @@ import lombok.Data;
  */
 
 @Data
-public abstract class CbBaseModel<T> extends BaseModel<CbBaseModel> {
+public abstract class CbBaseModel<T> extends BaseModel<CbBaseModel<?>> {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @ApiModelProperty(value = "创建时间")
     private Date createTime;

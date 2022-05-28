@@ -27,6 +27,12 @@
 			<artifactId>candybox-core</artifactId>
 			<version>0.0.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-authorization-server -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-authorization-server</artifactId>
+			<version>0.2.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>

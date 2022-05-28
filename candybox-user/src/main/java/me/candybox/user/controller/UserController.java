@@ -72,12 +72,12 @@ public class UserController {
 
         TokenInfoVO tokenInfoVO = userService.login(loginInfoVo);
         if(tokenInfoVO!=null){
-            Cookie cookie = new Cookie(ConstantConfig.accessTokenKey, tokenInfoVO.getTokenId());
+            Cookie cookie = new Cookie(ConstantConfig.ACCESS_TOKEN_KEY, tokenInfoVO.getTokenId());
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             rep.addCookie(cookie);
-            redisUtil.set(ConstantConfig.accessTokenKey+":"+tokenInfoVO.getTokenId(), JSON.toJSONString(tokenInfoVO));
-            redisUtil.expireSeconds(ConstantConfig.accessTokenKey+":"+tokenInfoVO.getTokenId(), 1*60*60*12);
+            redisUtil.set(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), JSON.toJSONString(tokenInfoVO));
+            redisUtil.expireSeconds(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), 1*60*60*12);
             resultVO.setData(tokenInfoVO);
             return resultVO;
         }

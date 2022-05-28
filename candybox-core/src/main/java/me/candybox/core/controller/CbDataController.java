@@ -31,7 +31,6 @@ import me.candybox.core.service.CbDataService;
 import me.candybox.core.utils.JSONObjectUtil;
 import me.candybox.core.utils.ValidatedUtil;
 import me.candybox.core.vo.ResultVO;
-import me.candybox.core.vo.TokenInfoVO;
 
 
 /**

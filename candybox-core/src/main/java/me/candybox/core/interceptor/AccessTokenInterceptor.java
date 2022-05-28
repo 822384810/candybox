@@ -33,7 +33,7 @@ public class AccessTokenInterceptor implements HandlerInterceptor{
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        log.debug("remove {}", ConstantConfig.accessTokenKey);
+        log.debug("remove {}", ConstantConfig.ACCESS_TOKEN_KEY);
         TokenInfoThreadLocal.remove();
         HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
@@ -49,20 +49,20 @@ public class AccessTokenInterceptor implements HandlerInterceptor{
         }
         ResultVO resultVO = new ResultVO(ConstantConfig.RESULT_STATUS_NO_ACCESSTOKEN, "用户登录已过期，请重新登录");
         response.setCharacterEncoding("utf-8");
-        String accessToken=getCookie(request, ConstantConfig.accessTokenKey);
+        String accessToken=getCookie(request, ConstantConfig.ACCESS_TOKEN_KEY);
         if(accessToken==null){
-            accessToken=request.getHeader(ConstantConfig.accessTokenKey);
+            accessToken=request.getHeader(ConstantConfig.ACCESS_TOKEN_KEY);
         }
         if(accessToken==null){
-            accessToken=request.getParameter(ConstantConfig.accessTokenKey);
+            accessToken=request.getParameter(ConstantConfig.ACCESS_TOKEN_KEY);
         }
-        log.debug("{}={}", ConstantConfig.accessTokenKey, accessToken);
+        log.debug("{}={}", ConstantConfig.ACCESS_TOKEN_KEY, accessToken);
         if(StrUtil.isBlank(accessToken)){
             response.getWriter().write(JSON.toJSONString(resultVO));
             response.setStatus(401);
             return false;
         }
-        Object ret =  redisUtil.get(ConstantConfig.accessTokenKey+":"+accessToken);
+        Object ret =  redisUtil.get(ConstantConfig.ACCESS_TOKEN_KEY+":"+accessToken);
         log.debug("{}={}", "TokenInfoVO", ret);
         if(ret!=null){
             TokenInfoVO tokenInfoVO=JSON.parseObject((String)ret, TokenInfoVO.class);

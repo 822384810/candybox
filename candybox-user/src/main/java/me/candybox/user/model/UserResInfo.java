@@ -39,7 +39,12 @@ public class UserResInfo extends CbBaseModel<UserResInfo>{
     @ApiModelProperty(value = "资源标签")
     private String tag;
 
-    @ApiModelProperty(value = "资源类型：1菜单资源2操作资源3数据资源9其他资源")
+    @ApiModelProperty(value = "资源类型：1菜单资源2操作资源3数据资源4接口资源9其他资源")
     private String type;
+
+    @ApiModelProperty(value = "api接口地址")
+    private String apiUrl;
+    @ApiModelProperty(value = "排序")
+    private Integer sort;
     
 }

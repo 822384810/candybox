@@ -34,10 +34,10 @@ public class AccessLogAspect {
     // private LogAccessMapper logAccessMapper;
 
     @Pointcut("execution (* me.candybox..*Controller.*(..)) && !execution(* me.candybox..*ErrorController.*getErrorPath(..))")
-    public void AccessLogAspect() {
+    public void AccessLogAspectPointcut() {
     }
 
-    @Around(value = "AccessLogAspect()")
+    @Around(value = "AccessLogAspectPointcut()")
     public Object doArround(ProceedingJoinPoint pjp) throws Exception {
         long stime = System.currentTimeMillis();
         log.debug("{} Before", pjp.getSignature().getDeclaringTypeName() + "." + pjp.getSignature().getName());
@@ -54,7 +54,7 @@ public class AccessLogAspect {
             model.setOptIp(HttpUtil.getClientIP(req));
             // //处理参数
             Object[] objects = pjp.getArgs();
-            List<Object> objectList = new ArrayList();
+            List<Object> objectList = new ArrayList<>();
             if(objects!=null){
                 for (Object object:objects){
                     if(object==null){

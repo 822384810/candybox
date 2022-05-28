@@ -7,12 +7,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import me.candybox.core.annotation.CbDataName;
+import me.candybox.core.model.BaseModel;
 
 /**
  * 登录日志
  */
 @Data
-public class LogLogin {
+@CbDataName(name="log_login")
+public class LogLogin extends BaseModel<LogLogin>{
     @TableId(type=IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "id")
     private String id;

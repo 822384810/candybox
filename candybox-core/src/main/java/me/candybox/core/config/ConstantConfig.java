@@ -9,7 +9,11 @@ public class ConstantConfig {
     public static int RESULT_STATUS_EXCEP=-1;           //异常
 
 
-    public static String accessTokenKey = "access-token";
+    public static String ACCESS_TOKEN_KEY = "access-token";
+
+    public static final String ACCESS_TOKEN_ID = "oauth:access-token:id:";
+    public static final String ACCESS_TOKEN_VALUE = "oauth:access-token:value:";
+
     
     
 

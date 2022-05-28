@@ -4,14 +4,15 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import me.candybox.core.annotation.CbDataName;
 
 @Data
-public class LogAccess extends Model<BaseModel> {
+@CbDataName(name="log_access")
+public class LogAccess extends BaseModel<BaseModel> {
 
     @TableId(type=IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "id")
