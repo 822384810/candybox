@@ -22,7 +22,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public boolean insert (BaseModel baseModel){
+    public boolean insert (BaseModel<?> baseModel){
         return baseModel.insert();
     }
 
@@ -31,7 +31,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public boolean updateById (BaseModel baseModel){
+    public boolean updateById (BaseModel<?> baseModel){
         return baseModel.updateById();
     }
 
@@ -40,7 +40,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public boolean update (BaseModel baseModel,Wrapper<BaseModel> queryWrapper){
+    public boolean update (BaseModel<?> baseModel,Wrapper<BaseModel<?>> queryWrapper){
         return baseModel.update(queryWrapper);
     }
 
@@ -49,7 +49,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public boolean insertOrUpdate (BaseModel baseModel){
+    public boolean insertOrUpdate (BaseModel<?> baseModel){
         return baseModel.insertOrUpdate();
     }
 
@@ -58,7 +58,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public boolean deleteById (BaseModel baseModel){
+    public boolean deleteById (BaseModel<?> baseModel){
         return baseModel.deleteById();
     }
 
@@ -67,7 +67,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public List<BaseModel> selectList (BaseModel baseModel,QueryWrapper queryWrapper){
+    public List<BaseModel<?>> selectList (BaseModel<?> baseModel,QueryWrapper<BaseModel<?>> queryWrapper){
         return baseModel.selectList(queryWrapper);
     }
 
@@ -81,7 +81,7 @@ public class CbDataService {
      * @param queryWrapper
      * @return
      */
-    public IPage<BaseModel> selectPage (BaseModel baseModel,IPage<BaseModel> page,Wrapper<BaseModel> queryWrapper){
+    public IPage<BaseModel<?>> selectPage (BaseModel<?> baseModel,IPage<BaseModel<?>> page,Wrapper<BaseModel<?>> queryWrapper){
         return baseModel.selectPage(page,queryWrapper);
     }
 }

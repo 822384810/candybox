@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.utils.ValidatedUtil;
 import me.candybox.core.vo.ResultVO;
 import me.candybox.user.model.Oauth2RegisteredClient;
 import me.candybox.user.service.OauthService;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/api/user/")
 public class OauthController {

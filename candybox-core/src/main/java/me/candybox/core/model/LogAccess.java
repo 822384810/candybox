@@ -7,12 +7,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.candybox.core.annotation.CbDataName;
 
-@Data
+@Getter
+@Setter
 @CbDataName(name="log_access")
-public class LogAccess extends BaseModel<BaseModel> {
+public class LogAccess extends BaseModel<BaseModel<?>> {
 
     @TableId(type=IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "id")

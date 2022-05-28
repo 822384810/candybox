@@ -1,8 +1,5 @@
 package me.candybox.user.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +10,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.annotation.AccessTokenOauth;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.model.BaseModel;
-import me.candybox.core.service.CbDataService;
 import me.candybox.core.utils.HttpUtil;
 import me.candybox.core.utils.JSONObjectUtil;
 import me.candybox.core.utils.RedisUtil;
@@ -40,15 +34,12 @@ import me.candybox.user.model.UserDeptInfo;
 import me.candybox.user.model.UserInfo;
 import me.candybox.user.service.UserService;
 import me.candybox.user.vo.LoginInfoVo;
-import me.candybox.user.vo.UserDeptInfoTreeVO;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/api/user/")
 public class UserController {
 
-    @Autowired
-    private CbDataService cbDataService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -110,23 +101,7 @@ public class UserController {
     @Operation(summary ="组织机构树查询")
     @GetMapping("/dept/tree")
     public ResultVO selectDeptTree(@Parameter(description="父id",required = true) @RequestParam(defaultValue = "0") String parentId){
-        QueryWrapper queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("status", 1);
-        queryWrapper.eq("parent_id", parentId);
-        queryWrapper.orderByAsc("create_time");
-        List<BaseModel> list = cbDataService.selectList(new UserDeptInfo(),queryWrapper);
-        if(list==null){
-            return new ResultVO();
-        }
-        List<UserDeptInfoTreeVO> userDeptInfoTreeVOs = new ArrayList<>();
-        list.forEach(item->{
-            UserDeptInfo userDeptInfo = (UserDeptInfo)item;
-            UserDeptInfoTreeVO userDeptInfoTreeVO = new UserDeptInfoTreeVO();
-            BeanUtils.copyProperties(userDeptInfo, userDeptInfoTreeVO);
-            userDeptInfoTreeVO.setValue(JSON.parseObject("{'id':'"+userDeptInfoTreeVO.getId()+"','name':'"+userDeptInfoTreeVO.getName()+"'}"));
-            userDeptInfoTreeVOs.add(userDeptInfoTreeVO);
-        });
-        return new ResultVO(userDeptInfoTreeVOs);
+        return new ResultVO(userService.selectDeptTree(parentId));
     }
 
 
@@ -157,8 +132,8 @@ public class UserController {
     ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
         //转换为查询条件对象
-        QueryWrapper<UserInfo> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
-        IPage<UserInfo> iPage = userService.selectPage(new Page<UserInfo>(pageNo,pageSize),queryWrapper);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        IPage<BaseModel<?>> iPage = userService.selectPage(new Page<BaseModel<?>>(pageNo,pageSize),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }

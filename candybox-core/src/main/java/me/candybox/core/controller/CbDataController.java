@@ -58,7 +58,7 @@ public class CbDataController {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel baseModel = (BaseModel) objectMapper.convertValue(jsonObject, ContextRefreshedListener.beans.get(name).getClass());
+        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject, ContextRefreshedListener.beans.get(name).getClass());
         //数据校验
         ValidatedUtil.validate(baseModel,resultVO);
         if(resultVO.getStatus()!=ConstantConfig.RESULT_STATUS_SUCC){
@@ -84,7 +84,7 @@ public class CbDataController {
         jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel baseModel = (BaseModel) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
+        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
         if(!cbDataService.updateById(baseModel)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
@@ -104,7 +104,7 @@ public class CbDataController {
         jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel baseModel = (BaseModel) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
+        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
         if(!cbDataService.updateById(baseModel)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
@@ -116,10 +116,10 @@ public class CbDataController {
     @RequestMapping(value="/cbdata/{name}/list",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
-        BaseModel baseModel = (BaseModel) ContextRefreshedListener.beans.get(name);
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
         //转换为查询条件对象
-        QueryWrapper queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
-        List<BaseModel> list = cbDataService.selectList(baseModel,queryWrapper);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
         return new ResultVO(list);
     }
 
@@ -129,10 +129,10 @@ public class CbDataController {
     ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
     ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
-        BaseModel baseModel = (BaseModel) ContextRefreshedListener.beans.get(name);
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
         //转换为查询条件对象
-        QueryWrapper queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
-        IPage<BaseModel> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel>(pageNo,pageSize),queryWrapper);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(pageNo,pageSize),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }

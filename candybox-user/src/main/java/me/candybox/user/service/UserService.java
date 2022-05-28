@@ -1,8 +1,10 @@
 package me.candybox.user.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,6 +20,8 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SmUtil;
 import me.candybox.core.config.TokenInfoThreadLocal;
+import me.candybox.core.model.BaseModel;
+import me.candybox.core.service.CbDataService;
 import me.candybox.core.vo.TokenInfoVO;
 import me.candybox.user.mapper.LogLoginMapper;
 import me.candybox.user.mapper.UserDeptInfoMapper;
@@ -26,6 +30,7 @@ import me.candybox.user.model.LogLogin;
 import me.candybox.user.model.UserDeptInfo;
 import me.candybox.user.model.UserInfo;
 import me.candybox.user.vo.LoginInfoVo;
+import me.candybox.user.vo.UserDeptInfoTreeVO;
 
 /**
  * 用户组织结构业务类
@@ -40,6 +45,8 @@ public class UserService {
     private UserDeptInfoMapper userDeptInfoMapper;
     @Autowired
     private LogLoginMapper logLoginMapper;
+    @Autowired
+    private CbDataService cbDataService;
 
 
     /**
@@ -89,7 +96,7 @@ public class UserService {
         int ret = userDeptInfoMapper.updateById(userDeptInfo);
         UserInfo userInfo = new UserInfo();
         userInfo.setDeptName(userDeptInfo.getName());
-        QueryWrapper queryWrapper = new QueryWrapper<>();
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("dept_id", userDeptInfo.getId());
         ret+=userInfoMapper.update(userInfo, queryWrapper);
         return ret;
@@ -175,16 +182,43 @@ public class UserService {
      * @param queryWrapper
      * @return
      */
-    public IPage<UserInfo> selectPage (IPage<UserInfo> page,Wrapper<UserInfo> queryWrapper){
-        IPage<UserInfo> iPage = userInfoMapper.selectPage(page,queryWrapper);
+    public IPage<BaseModel<?>> selectPage (IPage<BaseModel<?>> page,Wrapper<BaseModel<?>> queryWrapper){
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(new UserInfo(),page,queryWrapper);
         if(iPage!=null){
-            iPage.getRecords().forEach(userInfo->{
+            iPage.getRecords().forEach(item->{
+                UserInfo userInfo = (UserInfo)item;
                 userInfo.setMobilePhone(DesensitizedUtil.mobilePhone(userInfo.getMobilePhone()));
                 userInfo.setIdNumber(DesensitizedUtil.idCardNum(userInfo.getIdNumber(),1,4));
                 userInfo.setPassword("");
             });
         }
         return iPage;
+    }
+
+
+    /**
+     * 单位树查询
+     * @param parentId
+     * @return
+     */
+    public List<UserDeptInfoTreeVO> selectDeptTree(String parentId){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        queryWrapper.eq("parent_id", parentId);
+        queryWrapper.orderByAsc("create_time");
+        List<BaseModel<?>> list = cbDataService.selectList(new UserDeptInfo(),queryWrapper);
+        if(list==null){
+            return null;
+        }
+        List<UserDeptInfoTreeVO> userDeptInfoTreeVOs = new ArrayList<>();
+        list.forEach(item->{
+            UserDeptInfo userDeptInfo = (UserDeptInfo)item;
+            UserDeptInfoTreeVO userDeptInfoTreeVO = new UserDeptInfoTreeVO();
+            BeanUtils.copyProperties(userDeptInfo, userDeptInfoTreeVO);
+            userDeptInfoTreeVO.setValue(JSON.parseObject("{'id':'"+userDeptInfoTreeVO.getId()+"','name':'"+userDeptInfoTreeVO.getName()+"'}"));
+            userDeptInfoTreeVOs.add(userDeptInfoTreeVO);
+        });
+        return userDeptInfoTreeVOs;
     }
     
 }

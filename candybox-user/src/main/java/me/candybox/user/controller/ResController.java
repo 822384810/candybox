@@ -9,14 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.config.ConstantConfig;
 import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.core.vo.ResultVO;
 import me.candybox.user.service.ResService;
 import me.candybox.user.vo.UserRoleResRelationVO;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/user/res/")
 public class ResController {

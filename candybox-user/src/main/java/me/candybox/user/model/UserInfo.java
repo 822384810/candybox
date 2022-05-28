@@ -12,14 +12,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.candybox.core.annotation.CbDataName;
 import me.candybox.core.model.CbBaseModel;
 
 /**
  * 用户信息
  */
-@Data
+@Getter
+@Setter
 @CbDataName(name="user_user")
 public class UserInfo extends CbBaseModel<UserInfo>{
     @ApiModelProperty(value = "用户id")

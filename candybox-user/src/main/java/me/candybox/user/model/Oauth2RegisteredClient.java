@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.candybox.core.annotation.CbDataName;
 import me.candybox.core.model.CbBaseModel;
 
-@Data
+@Getter
+@Setter
 @CbDataName(name="oauth_client")
 public class Oauth2RegisteredClient extends CbBaseModel<Oauth2RegisteredClient>{
     @TableId(type=IdType.ASSIGN_UUID)

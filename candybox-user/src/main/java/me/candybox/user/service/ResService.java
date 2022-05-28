@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import me.candybox.core.config.TokenInfoThreadLocal;
-import me.candybox.core.model.BaseModel;
-import me.candybox.core.service.CbDataService;
 import me.candybox.user.mapper.UserResInfoMapper;
 import me.candybox.user.mapper.UserRoleResRelationMapper;
 import me.candybox.user.model.UserResInfo;
@@ -35,10 +33,6 @@ public class ResService {
     private UserRoleResRelationMapper userRoleResRelationMapper;
     @Autowired
     private UserResInfoMapper userResInfoMapper;
-    @Autowired
-    private CbDataService cbDataService;
-
-
    
 
     /**
@@ -85,23 +79,20 @@ public class ResService {
         queryWrapper.eq("status", 1);
         queryWrapper.eq("type", 1);
         queryWrapper.orderByAsc("sort");
-        List<BaseModel> list = cbDataService.selectList(new UserResInfo(),queryWrapper);
+        List<UserResInfo>  list = userResInfoMapper.selectList(queryWrapper);
         if(list==null){
             return null;
         }
         List<UserResInfoTreeVO> userResInfoTreeVOs = new ArrayList<>();
         list.forEach(item->{
-            UserResInfo userResInfo = (UserResInfo)item;
-            if("0".equals(userResInfo.getParentId())){
+            if("0".equals(item.getParentId())){
                 UserResInfoTreeVO userResInfoTreeVO = new UserResInfoTreeVO();
                 BeanUtils.copyProperties(item, userResInfoTreeVO);
-                execResTree(userResInfoTreeVO,userResInfo.getId(),list);
+                execResTree(userResInfoTreeVO,item.getId(),list);
                 userResInfoTreeVOs.add(userResInfoTreeVO);
             }
         });
         return userResInfoTreeVOs;
-
-
     }
 
     /**
@@ -110,15 +101,13 @@ public class ResService {
      * @param parentId
      * @param list
      */
-    private void execResTree(UserResInfoTreeVO userResInfoTreeVO,String parentId,List<BaseModel> list){
+    private void execResTree(UserResInfoTreeVO userResInfoTreeVO,String parentId,List<UserResInfo> list){
         List<UserResInfoTreeVO> tUserResInfoTreeVOs = new ArrayList<>();
         list.forEach(item->{
-            UserResInfo userResInfo = (UserResInfo)item;
-            if(parentId.equals(userResInfo.getParentId())){
+            if(parentId.equals(item.getParentId())){
                 UserResInfoTreeVO tUserResInfoTreeVO = new UserResInfoTreeVO();
                 BeanUtils.copyProperties(item, tUserResInfoTreeVO);
-                // tUserResInfoTreeVO.setValue(JSON.parseObject("{'id':'"+tUserResInfoTreeVO.getId()+"','name':'"+tUserResInfoTreeVO.getName()+"'}"));
-                execResTree(userResInfoTreeVO,userResInfo.getId(),list);
+                execResTree(userResInfoTreeVO,item.getId(),list);
                 tUserResInfoTreeVOs.add(tUserResInfoTreeVO);
             }
             

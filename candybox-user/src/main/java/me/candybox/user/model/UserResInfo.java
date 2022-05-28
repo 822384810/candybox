@@ -8,14 +8,16 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.candybox.core.annotation.CbDataName;
 import me.candybox.core.model.CbBaseModel;
 
 /**
  * 资源信息
  */
-@Data
+@Getter
+@Setter
 @CbDataName(name="user_res")
 public class UserResInfo extends CbBaseModel<UserResInfo>{
 

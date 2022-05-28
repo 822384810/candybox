@@ -5,14 +5,17 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * candybox model 父类
  * 封装基础属性
  */
 
-@Data
+@Getter
+@Setter
 public abstract class CbBaseModel<T> extends BaseModel<CbBaseModel<?>> {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     @ApiModelProperty(value = "创建时间")

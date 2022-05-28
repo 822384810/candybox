@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import me.candybox.core.model.BaseModel;
 
 public class JSONObjectUtil {
     /**
@@ -46,8 +47,8 @@ public class JSONObjectUtil {
      * @param jsonObject
      * @return
      */
-    public static QueryWrapper jsonObject2QueryWrapper(JSONObject jsonObject){
-        QueryWrapper queryWrapper = new QueryWrapper<>();
+    public static QueryWrapper<BaseModel<?>> jsonObject2QueryWrapper(JSONObject jsonObject){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
         if(jsonObject!=null){
             JSONObject jsonObjectFormat = JSONObjectUtil.formatKey(jsonObject, false);
             jsonObjectFormat.keySet().forEach(key->{
@@ -63,22 +64,22 @@ public class JSONObjectUtil {
                         return;
                     }
                     if(key.indexOf("eq-")==0){
-                        String it=jsonObjectFormat.get(key).toString();
+                        // String it=jsonObjectFormat.get(key).toString();
                         queryWrapper.eq(key.replaceFirst("eq-", ""), jsonObjectFormat.get(key));
                         return;
                     }
                     if(key.indexOf("like-left-")==0){
-                        String it=jsonObjectFormat.get(key).toString();
+                        // String it=jsonObjectFormat.get(key).toString();
                         queryWrapper.likeLeft(key.replaceFirst("like-left-", ""), jsonObjectFormat.get(key));
                         return;
                     }
                     if(key.indexOf("like-right-")==0){
-                        String it=jsonObjectFormat.get(key).toString();
+                        // String it=jsonObjectFormat.get(key).toString();
                         queryWrapper.likeRight(key.replaceFirst("like-right-", ""), jsonObjectFormat.get(key));
                         return;
                     }
                     if(key.indexOf("like-")==0){
-                        String it=jsonObjectFormat.get(key).toString();
+                        // String it=jsonObjectFormat.get(key).toString();
                         queryWrapper.like(key.replaceFirst("like-", ""), jsonObjectFormat.get(key));
                         return;
                     }
