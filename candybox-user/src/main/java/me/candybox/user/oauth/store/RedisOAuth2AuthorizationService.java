@@ -1,22 +1,35 @@
 package me.candybox.user.oauth.store;
 
+import java.util.Date;
+
 import com.alibaba.fastjson.JSON;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import me.candybox.core.config.ConstantConfig;
+import me.candybox.core.vo.TokenInfoVO;
+import me.candybox.user.mapper.LogLoginMapper;
+import me.candybox.user.model.LogLogin;
 
 
 
 @Slf4j
 public class RedisOAuth2AuthorizationService extends JdbcOAuth2AuthorizationService{
+
+    @Autowired
+    private LogLoginMapper logLoginMapper;
+    @Autowired
+    private JdbcRegisteredClientService jdbcRegisteredClientService;
+
 	// private final Map<String, OAuth2Authorization> authorizations = new ConcurrentHashMap<>();
 
 	// public RedisOAuth2AuthorizationService(OAuth2Authorization... authorizations) {
@@ -24,7 +37,7 @@ public class RedisOAuth2AuthorizationService extends JdbcOAuth2AuthorizationServ
 	// }
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
 
     public RedisOAuth2AuthorizationService(JdbcOperations jdbcOperations,
             RegisteredClientRepository registeredClientRepository) {
@@ -66,6 +79,26 @@ public class RedisOAuth2AuthorizationService extends JdbcOAuth2AuthorizationServ
         redisTemplate.expireAt(ConstantConfig.ACCESS_TOKEN_ID+tokenId, authorization.getAccessToken().getToken().getExpiresAt());
         redisTemplate.opsForValue().set(ConstantConfig.ACCESS_TOKEN_VALUE+tokenValue,value);
         redisTemplate.expireAt(ConstantConfig.ACCESS_TOKEN_VALUE+tokenValue, authorization.getAccessToken().getToken().getExpiresAt());
+
+        //整合用户登录
+        TokenInfoVO tokenInfoVO = new TokenInfoVO();
+        tokenInfoVO.setUserId(authorization.getRegisteredClientId());
+        RegisteredClient registeredClient = jdbcRegisteredClientService.findById(authorization.getRegisteredClientId());
+        if(registeredClient!=null){
+            tokenInfoVO.setUserName(registeredClient.getClientName());
+            tokenInfoVO.setScopes(registeredClient.getScopes());
+        }
+        tokenInfoVO.setTokenId(tokenValue);
+        tokenInfoVO.setTokenType("oauth2");
+        redisTemplate.opsForValue().set(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), JSON.toJSONString(tokenInfoVO));
+        redisTemplate.expireAt(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), authorization.getAccessToken().getToken().getExpiresAt());
+        //登录日志
+        LogLogin logLogin = new LogLogin();
+        BeanUtils.copyProperties(tokenInfoVO, logLogin);
+        logLogin.setLoginSource("oauth2");
+        logLogin.setLoginTime(new Date());
+        logLoginMapper.insert(logLogin);
+
     }
     
 }

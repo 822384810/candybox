@@ -1,5 +1,7 @@
 package me.candybox.core.vo;
 
+import java.util.Set;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -20,5 +22,7 @@ public class TokenInfoVO {
     private String deptName;
     @ApiModelProperty(value = "token类型")
     private String tokenType;
+    @ApiModelProperty(value = "oauth2认证的scopes")
+    private Set<String> scopes;
 
 }
