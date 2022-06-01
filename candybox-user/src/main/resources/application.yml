@@ -1,7 +1,7 @@
 server:
   port: 8012
   servlet:
-    context-path: /
+    context-path: /user
     encoding:
       charset: utf-8
 

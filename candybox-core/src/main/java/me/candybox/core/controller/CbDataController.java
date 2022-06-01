@@ -3,7 +3,7 @@ package me.candybox.core.controller;
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,24 +47,28 @@ public class CbDataController {
     @PostMapping("/cbdata/{name}")
     public ResultVO insert(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="json格式数据",required = true) @RequestBody(required = true) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
         ResultVO resultVO = new ResultVO();
         if(jsonObject!=null){
             jsonObject.put("status", 1);
             jsonObject.put("createTime", new Date());
-
             jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
             jsonObject.put("createUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
-
+            jsonObject.put("createDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
+            jsonObject.put("createDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject, ContextRefreshedListener.beans.get(name).getClass());
+        BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject, baseModel.getClass());
         //数据校验
-        ValidatedUtil.validate(baseModel,resultVO);
+        ValidatedUtil.validate(baseModelObj,resultVO);
         if(resultVO.getStatus()!=ConstantConfig.RESULT_STATUS_SUCC){
             return resultVO;
         }
-        if(!cbDataService.insert(baseModel)){
+        if(!cbDataService.insert(baseModelObj)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }
@@ -75,6 +79,10 @@ public class CbDataController {
     @DeleteMapping("/cbdata/{name}")
     public ResultVO logicDelete(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="id",required = true) @RequestParam(required = true) String id){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
         ResultVO resultVO = new ResultVO();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
@@ -82,10 +90,12 @@ public class CbDataController {
         jsonObject.put("updateTime", new Date());
         jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
         jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
+        jsonObject.put("updateDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
+        jsonObject.put("updateDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
-        if(!cbDataService.updateById(baseModel)){
+        BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());     
+        if(!cbDataService.updateById(baseModelObj)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }
@@ -97,15 +107,26 @@ public class CbDataController {
     public ResultVO update(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="id",required = true) @RequestParam(required = true) String id
     ,@Parameter(description="json格式数据",required = true) @RequestBody(required = true) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
         ResultVO resultVO = new ResultVO();
         jsonObject.put("id", id);
         jsonObject.put("updateTime", new Date());
         jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
         jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
+        jsonObject.put("updateDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
+        jsonObject.put("updateDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        BaseModel<?> baseModel = (BaseModel<?>) objectMapper.convertValue(jsonObject,ContextRefreshedListener.beans.get(name).getClass());     
-        if(!cbDataService.updateById(baseModel)){
+        BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());   
+        //数据校验
+        ValidatedUtil.validate(baseModelObj,resultVO);
+        if(resultVO.getStatus()!=ConstantConfig.RESULT_STATUS_SUCC){
+            return resultVO;
+        }  
+        if(!cbDataService.updateById(baseModelObj)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }
@@ -117,6 +138,9 @@ public class CbDataController {
     public ResultVO selectList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
         BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
         //转换为查询条件对象
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
         List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
@@ -126,13 +150,16 @@ public class CbDataController {
     @Operation(summary ="分页数据查询")
     @RequestMapping(value="/cbdata/{name}/page",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
-    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
-    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
         BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
         //转换为查询条件对象
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
-        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(pageNo,pageSize),queryWrapper);
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPerPage(jsonObject, perPage)),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }

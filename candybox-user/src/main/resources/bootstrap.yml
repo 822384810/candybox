@@ -1,7 +1,5 @@
 
 spring:
-  application:
-    name: candybox-user
   cloud:
     config:
       discovery:

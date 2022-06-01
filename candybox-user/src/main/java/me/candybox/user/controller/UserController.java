@@ -4,8 +4,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -149,12 +149,12 @@ public class UserController {
 
     @Operation(summary ="用户查询")
     @RequestMapping(value = "/user/page",method = {RequestMethod.POST,RequestMethod.GET})
-    public ResultVO selectUserPage(@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
-    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize
+    public ResultVO selectUserPage(@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
         //转换为查询条件对象
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
-        IPage<BaseModel<?>> iPage = userService.selectPage(new Page<BaseModel<?>>(pageNo,pageSize),queryWrapper);
+        IPage<BaseModel<?>> iPage = userService.selectPage(new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPage(jsonObject, perPage)),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }

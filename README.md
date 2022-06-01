@@ -16,6 +16,8 @@
 
 7.数据库：MyBatis-Plus（使用时注意修改配置文件中的主机IP，端口、密码）
 
+8.oauth：spring-projects/spring-authorization-server
+
 # 开源协议
 APACHE LICENSE, VERSION 2.0
 
@@ -27,3 +29,5 @@ https://www.apache.org/licenses/LICENSE-2.0.html
 billiBili：up小冬
 
 微博：@up小冬
+
+QQ群：436452027

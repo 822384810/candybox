@@ -32,9 +32,9 @@ public class RoleController {
     public ResultVO selectRelationByUserPage(@Parameter(description="用户id",required = true) @RequestParam(required = true) String userId
     ,@Parameter(description="角色名称",required = true) @RequestParam(required = true,defaultValue = "") String roleName
     ,@Parameter(description="角色😊",required = true) @RequestParam(required = true,defaultValue = "") String roleTag
-    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
-    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize){
-        IPage<UserRoleRelationVO> iPage = rolesService.selectRelationByUser(new Page<UserRoleRelationVO>(pageNo,pageSize), userId,roleName,roleTag);
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage){
+        IPage<UserRoleRelationVO> iPage = rolesService.selectRelationByUser(new Page<UserRoleRelationVO>(page,perPage), userId,roleName,roleTag);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }
@@ -45,9 +45,9 @@ public class RoleController {
     public ResultVO selectRelationByResPage(@Parameter(description="资源id",required = true) @RequestParam(required = true) String resId
     ,@Parameter(description="角色名称",required = true) @RequestParam(required = true,defaultValue = "") String roleName
     ,@Parameter(description="角色😊",required = true) @RequestParam(required = true,defaultValue = "") String roleTag
-    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int pageNo
-    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int pageSize){
-        IPage<UserRoleResRelationVO> iPage = rolesService.selectRelationByRes(new Page<UserRoleResRelationVO>(pageNo,pageSize), resId,roleName,roleTag);
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage){
+        IPage<UserRoleResRelationVO> iPage = rolesService.selectRelationByRes(new Page<UserRoleResRelationVO>(page,perPage), resId,roleName,roleTag);
         ResultVO resultVO = new ResultVO(iPage);
         return resultVO;
     }
