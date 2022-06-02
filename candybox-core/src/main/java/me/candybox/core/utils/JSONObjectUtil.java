@@ -1,6 +1,8 @@
 package me.candybox.core.utils;
 
 
+import java.util.Date;
+
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -8,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.core.model.BaseModel;
 
 public class JSONObjectUtil {
@@ -129,6 +132,31 @@ public class JSONObjectUtil {
             }
         }
         return perPage;
+    }
+
+
+    /**
+     * 设置更新用户相关信息
+     * @param jsonObject
+     */
+    public static void setCreateUser(JSONObject jsonObject){
+        jsonObject.put("createTime", new Date());
+        jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("createUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
+        jsonObject.put("createDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
+        jsonObject.put("createDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
+    }
+
+    /**
+     * 设置更新用户相关信息
+     * @param jsonObject
+     */
+    public static void setUpdateUser(JSONObject jsonObject){
+        jsonObject.put("updateTime", new Date());
+        jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
+        jsonObject.put("updateDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
+        jsonObject.put("updateDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
     }
     
 }

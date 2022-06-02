@@ -62,7 +62,11 @@ public class UserService {
             return null;
         }
         userInfo.setLastLoginTime(new Date());
-        userInfo.setLoginCount(userInfo.getLoginCount()+1);
+        if(userInfo.getLoginCount()==null){
+            userInfo.setLoginCount((long)0);
+        }else{
+            userInfo.setLoginCount(userInfo.getLoginCount()+1);
+        }
         userInfoMapper.updateById(userInfo);
         TokenInfoVO tokenInfoVO = new TokenInfoVO();
         tokenInfoVO.setDeptId(userInfo.getDeptId());

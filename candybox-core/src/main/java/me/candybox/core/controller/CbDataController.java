@@ -1,6 +1,5 @@
 package me.candybox.core.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson2.JSONObject;
@@ -54,11 +53,7 @@ public class CbDataController {
         ResultVO resultVO = new ResultVO();
         if(jsonObject!=null){
             jsonObject.put("status", 1);
-            jsonObject.put("createTime", new Date());
-            jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
-            jsonObject.put("createUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
-            jsonObject.put("createDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
-            jsonObject.put("createDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
+            JSONObjectUtil.setCreateUser(jsonObject);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -87,15 +82,34 @@ public class CbDataController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
         jsonObject.put("status", "0");
-        jsonObject.put("updateTime", new Date());
-        jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
-        jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
-        jsonObject.put("updateDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
-        jsonObject.put("updateDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
+        JSONObjectUtil.setUpdateUser(jsonObject);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());     
         if(!cbDataService.updateById(baseModelObj)){
+            resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
+            resultVO.setMsg("操作失败");
+        }
+        return resultVO;
+    }
+
+    @Operation(summary ="数据逻辑删除")
+    @DeleteMapping("/cbdata/{name}/user")
+    public ResultVO logicDeleteByUser(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="id",required = true) @RequestParam(required = true) String id){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        ResultVO resultVO = new ResultVO();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("status", "0");
+        JSONObjectUtil.setUpdateUser(jsonObject);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());     
+        if(!cbDataService.updateByUserId(baseModelObj)){
             resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
             resultVO.setMsg("操作失败");
         }
@@ -113,11 +127,7 @@ public class CbDataController {
         }
         ResultVO resultVO = new ResultVO();
         jsonObject.put("id", id);
-        jsonObject.put("updateTime", new Date());
-        jsonObject.put("updateUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
-        jsonObject.put("updateUserName", TokenInfoThreadLocal.getTokenInfo().getUserName());
-        jsonObject.put("updateDeptId", TokenInfoThreadLocal.getTokenInfo().getDeptId());
-        jsonObject.put("updateDeptName", TokenInfoThreadLocal.getTokenInfo().getDeptName());
+        JSONObjectUtil.setUpdateUser(jsonObject);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());   
@@ -133,6 +143,33 @@ public class CbDataController {
         return resultVO;
     }
 
+    @Operation(summary ="数据修改")
+    @PutMapping("/cbdata/{name}/user")
+    public ResultVO updateByUser(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="id",required = true) @RequestParam(required = true) String id
+    ,@Parameter(description="json格式数据",required = true) @RequestBody(required = true) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        ResultVO resultVO = new ResultVO();
+        jsonObject.put("id", id);
+        JSONObjectUtil.setUpdateUser(jsonObject);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        BaseModel<?> baseModelObj = (BaseModel<?>) objectMapper.convertValue(jsonObject,baseModel.getClass());   
+        //数据校验
+        ValidatedUtil.validate(baseModelObj,resultVO);
+        if(resultVO.getStatus()!=ConstantConfig.RESULT_STATUS_SUCC){
+            return resultVO;
+        }  
+        if(!cbDataService.updateByUserId(baseModelObj)){
+            resultVO.setStatus(ConstantConfig.RESULT_STATUS_FAIL);
+            resultVO.setMsg("操作失败");
+        }
+        return resultVO;
+    }
+
     @Operation(summary ="数据查询")
     @RequestMapping(value="/cbdata/{name}/list",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
@@ -142,6 +179,24 @@ public class CbDataController {
             return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
         }
         //转换为查询条件对象
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
+        return new ResultVO(list);
+    }
+
+    @Operation(summary ="数据按用户查询")
+    @RequestMapping(value="/cbdata/{name}/user/list",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectByUserList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
         List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
         return new ResultVO(list);
@@ -164,6 +219,27 @@ public class CbDataController {
         return resultVO;
     }
 
+
+    @Operation(summary ="分页数据按用户查询")
+    @RequestMapping(value="/cbdata/{name}/user/page",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectByUserPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPerPage(jsonObject, perPage)),queryWrapper);
+        ResultVO resultVO = new ResultVO(iPage);
+        return resultVO;
+    }
 
     
 
