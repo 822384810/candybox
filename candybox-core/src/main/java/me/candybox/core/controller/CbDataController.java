@@ -93,7 +93,7 @@ public class CbDataController {
         return resultVO;
     }
 
-    @Operation(summary ="数据逻辑删除")
+    @Operation(summary ="用户数据逻辑删除")
     @DeleteMapping("/cbdata/{name}/user")
     public ResultVO logicDeleteByUser(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="id",required = true) @RequestParam(required = true) String id){
@@ -143,7 +143,7 @@ public class CbDataController {
         return resultVO;
     }
 
-    @Operation(summary ="数据修改")
+    @Operation(summary ="用户数据修改")
     @PutMapping("/cbdata/{name}/user")
     public ResultVO updateByUser(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="id",required = true) @RequestParam(required = true) String id
@@ -183,8 +183,25 @@ public class CbDataController {
         List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
         return new ResultVO(list);
     }
+    @Operation(summary ="有效数据查询")
+    @RequestMapping(value="/cbdata/{name}/valid/list",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectValidList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("status", 1);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
+        return new ResultVO(list);
+    }
 
-    @Operation(summary ="数据按用户查询")
+    @Operation(summary ="用户数据查询")
     @RequestMapping(value="/cbdata/{name}/user/list",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectByUserList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
@@ -202,7 +219,26 @@ public class CbDataController {
         return new ResultVO(list);
     }
 
-    @Operation(summary ="分页数据查询")
+    @Operation(summary ="用户有效数据查询")
+    @RequestMapping(value="/cbdata/{name}/user/valid/list",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectByUserValidList(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("status", 1);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        List<BaseModel<?>> list = cbDataService.selectList(baseModel,queryWrapper);
+        return new ResultVO(list);
+    }
+
+    @Operation(summary ="数据分页查询")
     @RequestMapping(value="/cbdata/{name}/page",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
@@ -219,8 +255,29 @@ public class CbDataController {
         return resultVO;
     }
 
+    @Operation(summary ="有效数据分页查询")
+    @RequestMapping(value="/cbdata/{name}/valid/page",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectValidPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("status", 1);
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPerPage(jsonObject, perPage)),queryWrapper);
+        ResultVO resultVO = new ResultVO(iPage);
+        return resultVO;
+    }
 
-    @Operation(summary ="分页数据按用户查询")
+
+    @Operation(summary ="用户数据分页查询")
     @RequestMapping(value="/cbdata/{name}/user/page",method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectByUserPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
     ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
@@ -235,6 +292,28 @@ public class CbDataController {
             jsonObject=new JSONObject();
         }
         jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
+        IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPerPage(jsonObject, perPage)),queryWrapper);
+        ResultVO resultVO = new ResultVO(iPage);
+        return resultVO;
+    }
+
+    @Operation(summary ="有效用户数据分页查询")
+    @RequestMapping(value="/cbdata/{name}/user/valid/page",method = {RequestMethod.GET,RequestMethod.POST})
+    public ResultVO selectByUserValidPage(@Parameter(description="数据模块名称",required = true) @PathVariable(required = true) String name
+    ,@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
+    ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
+    ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
+        BaseModel<?> baseModel = (BaseModel<?>) ContextRefreshedListener.beans.get(name);
+        if(baseModel==null){
+            return new ResultVO(ConstantConfig.RESULT_STATUS_FAIL,"Model未定义");
+        }
+        //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("createUserId", TokenInfoThreadLocal.getTokenInfo().getUserId());
+        jsonObject.put("status", 1);
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
         IPage<BaseModel<?>> iPage = cbDataService.selectPage(baseModel,new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPerPage(jsonObject, perPage)),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);

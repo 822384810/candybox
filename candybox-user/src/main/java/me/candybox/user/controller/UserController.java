@@ -148,11 +148,15 @@ public class UserController {
 
 
     @Operation(summary ="用户查询")
-    @RequestMapping(value = "/user/page",method = {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping(value = "/user/valid/page",method = {RequestMethod.POST,RequestMethod.GET})
     public ResultVO selectUserPage(@Parameter(description="当前页",required = true) @RequestParam(defaultValue = "1",required = true) int page
     ,@Parameter(description="页大小",required = true) @RequestParam(defaultValue = "10",required = true) int perPage
     ,@Parameter(description="查询条件JSONObject封装数据",required = false) @RequestBody(required = false) JSONObject jsonObject){
         //转换为查询条件对象
+        if(jsonObject==null){
+            jsonObject=new JSONObject();
+        }
+        jsonObject.put("status", 1);
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
         IPage<BaseModel<?>> iPage = userService.selectPage(new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPage(jsonObject, perPage)),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
