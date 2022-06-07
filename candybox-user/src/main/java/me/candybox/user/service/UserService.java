@@ -22,6 +22,7 @@ import cn.hutool.crypto.SmUtil;
 import me.candybox.core.config.TokenInfoThreadLocal;
 import me.candybox.core.model.BaseModel;
 import me.candybox.core.service.CbDataService;
+import me.candybox.core.vo.FormSelectVO;
 import me.candybox.core.vo.TokenInfoVO;
 import me.candybox.user.mapper.LogLoginMapper;
 import me.candybox.user.mapper.UserDeptInfoMapper;
@@ -200,6 +201,65 @@ public class UserService {
         return iPage;
     }
 
+    /**
+     * 用户列表查询
+     * @param queryWrapper
+     * @return
+     */
+    public List<BaseModel<?>> selectUserList (Wrapper<BaseModel<?>> queryWrapper){
+        List<BaseModel<?>> uList = cbDataService.selectList(new UserInfo(),queryWrapper);
+        if(uList!=null){
+            uList.forEach(item->{
+                UserInfo userInfo = (UserInfo)item;
+                userInfo.setMobilePhone(DesensitizedUtil.mobilePhone(userInfo.getMobilePhone()));
+                userInfo.setIdNumber(DesensitizedUtil.idCardNum(userInfo.getIdNumber(),1,4));
+                userInfo.setPassword("");
+            });
+        }
+        return uList;
+    }
+
+    /**
+     * 用户select form 列表查询
+     * @param queryWrapper
+     * @return
+     */
+    public List<FormSelectVO> selectUserListForFormSelect (Wrapper<BaseModel<?>> queryWrapper){
+        List<BaseModel<?>> uList = selectUserList(queryWrapper);
+        List<FormSelectVO> formSelectVOs = new ArrayList<FormSelectVO>() {
+        };
+        if(uList!=null){
+            uList.forEach(item->{
+                UserInfo userInfo = (UserInfo)item;
+                FormSelectVO formSelectVO = new FormSelectVO();
+                formSelectVO.setLabel(userInfo.getName());
+                formSelectVO.setValue(userInfo.getId());
+                formSelectVOs.add(formSelectVO);
+            });
+        }
+        return formSelectVOs;
+    }
+
+    /**
+     * 用户select form 列表查询
+     * @param queryWrapper
+     * @return
+     */
+    public List<FormSelectVO> selectDeptListForFormSelect (Wrapper<BaseModel<?>> queryWrapper){
+        List<BaseModel<?>> dList = cbDataService.selectList(new UserDeptInfo(),queryWrapper);
+        List<FormSelectVO> formSelectVOs = new ArrayList<FormSelectVO>() {
+        };
+        if(dList!=null){
+            dList.forEach(item->{
+                UserDeptInfo userDeptInfo = (UserDeptInfo)item;
+                FormSelectVO formSelectVO = new FormSelectVO();
+                formSelectVO.setLabel(userDeptInfo.getName());
+                formSelectVO.setValue(userDeptInfo.getId());
+                formSelectVOs.add(formSelectVO);
+            });
+        }
+        return formSelectVOs;
+    }
 
     /**
      * 单位树查询

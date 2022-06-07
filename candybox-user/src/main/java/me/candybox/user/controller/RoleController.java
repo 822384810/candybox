@@ -1,5 +1,6 @@
 package me.candybox.user.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import me.candybox.core.config.ConstantConfig;
+import me.candybox.core.model.BaseModel;
 import me.candybox.core.vo.ResultVO;
 import me.candybox.user.service.RoleService;
 import me.candybox.user.vo.UserRoleRelationVO;
@@ -64,4 +66,12 @@ public class RoleController {
         return resultVO;
     }
     
+    @Operation(summary ="下拉表单角色查询")
+    @RequestMapping(value = "/list/form/select",method = {RequestMethod.GET})
+    public ResultVO selectListForFormSelect(){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        ResultVO resultVO = new ResultVO(rolesService.selectListForFormSelect(queryWrapper));
+        return resultVO;
+    }
 }

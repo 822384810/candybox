@@ -5,7 +5,6 @@ import java.util.List;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.stereotype.Service;
@@ -91,7 +90,7 @@ public class CbDataService {
      * @param baseModel
      * @return
      */
-    public List<BaseModel<?>> selectList (BaseModel<?> baseModel,QueryWrapper<BaseModel<?>> queryWrapper){
+    public List<BaseModel<?>> selectList (BaseModel<?> baseModel,Wrapper<BaseModel<?>> queryWrapper){
         return baseModel.selectList(queryWrapper);
     }
 

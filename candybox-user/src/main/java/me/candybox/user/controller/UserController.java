@@ -89,7 +89,7 @@ public class UserController {
             cookie.setPath("/");
             rep.addCookie(cookie);
             redisUtil.set(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), JSON.toJSONString(tokenInfoVO));
-            redisUtil.expireSeconds(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), 1*60*60*2);
+            redisUtil.expireSeconds(ConstantConfig.ACCESS_TOKEN_KEY+":"+tokenInfoVO.getTokenId(), 1*60*60*12);
             resultVO.setData(tokenInfoVO);
             return resultVO;
         }
@@ -156,6 +156,25 @@ public class UserController {
         QueryWrapper<BaseModel<?>> queryWrapper = JSONObjectUtil.jsonObject2QueryWrapper(jsonObject);
         IPage<BaseModel<?>> iPage = userService.selectPage(new Page<BaseModel<?>>(JSONObjectUtil.getPage(jsonObject, page),JSONObjectUtil.getPage(jsonObject, perPage)),queryWrapper);
         ResultVO resultVO = new ResultVO(iPage);
+        return resultVO;
+    }
+
+
+    @Operation(summary ="下拉表单用户查询")
+    @RequestMapping(value = "/user/list/form/select",method = {RequestMethod.GET})
+    public ResultVO selectUserListForFormSelect(){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        ResultVO resultVO = new ResultVO(userService.selectUserListForFormSelect(queryWrapper));
+        return resultVO;
+    }
+
+    @Operation(summary ="下拉表单用户查询")
+    @RequestMapping(value = "/dept/list/form/select",method = {RequestMethod.GET})
+    public ResultVO selectDeptListForFormSelect(){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        ResultVO resultVO = new ResultVO(userService.selectDeptListForFormSelect(queryWrapper));
         return resultVO;
     }
 
