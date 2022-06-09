@@ -38,9 +38,11 @@ public class RoleService {
     private CbDataService cbDataService;
 
 
+    
+
 
     /**
-     * 按用户查询角色列表
+     * 按用户查询用户角色对应关系列表
      * @param page
      * @param userId
      * @return
@@ -57,7 +59,7 @@ public class RoleService {
     }
 
      /**
-     * 按资源查询角色列表
+     * 按资源查询资源角色对应关系列表
      * @param page
      * @param userId
      * @return
@@ -128,5 +130,8 @@ public class RoleService {
         }
         return formSelectVOs;
     }
+
+
+
     
 }

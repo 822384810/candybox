@@ -29,7 +29,7 @@ public class RoleController {
     private RoleService rolesService;
 
 
-    @Operation(summary ="用户角色关系")
+    @Operation(summary ="用户角色列表分页查询")
     @RequestMapping(value = "/relation/user/page" ,method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectRelationByUserPage(@Parameter(description="用户id",required = true) @RequestParam(required = true) String userId
     ,@Parameter(description="角色名称",required = true) @RequestParam(required = true,defaultValue = "") String roleName
@@ -42,7 +42,7 @@ public class RoleController {
     }
 
 
-    @Operation(summary ="资源角色关系")
+    @Operation(summary ="资源角色列表分页查询")
     @RequestMapping(value = "/relation/res/page" ,method = {RequestMethod.GET,RequestMethod.POST})
     public ResultVO selectRelationByResPage(@Parameter(description="资源id",required = true) @RequestParam(required = true) String resId
     ,@Parameter(description="角色名称",required = true) @RequestParam(required = true,defaultValue = "") String roleName

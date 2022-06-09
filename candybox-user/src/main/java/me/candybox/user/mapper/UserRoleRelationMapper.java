@@ -1,9 +1,9 @@
 package me.candybox.user.mapper;
 
+import org.apache.ibatis.annotations.Select;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-
-import org.apache.ibatis.annotations.Select;
 
 import me.candybox.user.model.UserRoleRelation;
 import me.candybox.user.vo.UserRoleRelationVO;

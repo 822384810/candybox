@@ -173,7 +173,24 @@ public class UserController {
         return resultVO;
     }
 
-    @Operation(summary ="下拉表单用户查询")
+    @Operation(summary ="下拉表单单位用户查询")
+    @RequestMapping(value = "/dept/user/list/form/select",method = {RequestMethod.GET})
+    public ResultVO selectDeptUserListForFormSelect(@Parameter(description="单位id",required = true) @RequestParam(required = true) String deptId){
+        QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", 1);
+        queryWrapper.eq("dept_id", deptId);
+        ResultVO resultVO = new ResultVO(userService.selectUserListForFormSelect(queryWrapper));
+        return resultVO;
+    }
+
+    @Operation(summary ="下拉表单角色用户查询")
+    @RequestMapping(value = "/role/user/list/form/select",method = {RequestMethod.GET})
+    public ResultVO selectRoleUserListForFormSelect(@Parameter(description="角色id",required = true) @RequestParam(required = true) String roleId){
+        ResultVO resultVO = new ResultVO(userService.selectRoleListForFormSelect(roleId));
+        return resultVO;
+    }
+
+    @Operation(summary ="下拉表单单位查询")
     @RequestMapping(value = "/dept/list/form/select",method = {RequestMethod.GET})
     public ResultVO selectDeptListForFormSelect(){
         QueryWrapper<BaseModel<?>> queryWrapper = new QueryWrapper<>();

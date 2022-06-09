@@ -2,7 +2,9 @@ package me.candybox.user.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -27,9 +29,11 @@ import me.candybox.core.vo.TokenInfoVO;
 import me.candybox.user.mapper.LogLoginMapper;
 import me.candybox.user.mapper.UserDeptInfoMapper;
 import me.candybox.user.mapper.UserInfoMapper;
+import me.candybox.user.mapper.UserRoleRelationMapper;
 import me.candybox.user.model.LogLogin;
 import me.candybox.user.model.UserDeptInfo;
 import me.candybox.user.model.UserInfo;
+import me.candybox.user.model.UserRoleRelation;
 import me.candybox.user.vo.LoginInfoVo;
 import me.candybox.user.vo.UserDeptInfoTreeVO;
 
@@ -47,6 +51,8 @@ public class UserService {
     @Autowired
     private LogLoginMapper logLoginMapper;
     @Autowired
+    private UserRoleRelationMapper userRoleRelationMapper;
+    @Autowired
     private CbDataService cbDataService;
 
 
@@ -62,6 +68,13 @@ public class UserService {
         if(!SmUtil.sm3().digestHex(loginInfoVo.getUserPwd()).equals(userInfo.getPassword())){
             return null;
         }
+        //查询用户角色
+        QueryWrapper<UserRoleRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userInfo.getId());
+        queryWrapper.eq("status", 1);
+        List<UserRoleRelation> userRoleRelations =  userRoleRelationMapper.selectList(queryWrapper);
+
+
         userInfo.setLastLoginTime(new Date());
         if(userInfo.getLoginCount()==null){
             userInfo.setLoginCount((long)0);
@@ -76,6 +89,13 @@ public class UserService {
         tokenInfoVO.setUserName(userInfo.getName());
         tokenInfoVO.setTokenId(IdUtil.simpleUUID());
         tokenInfoVO.setTokenType("user");
+        Set<String> roles = new HashSet<>();
+        if(userRoleRelations!=null&&userRoleRelations.size()>0){
+            userRoleRelations.forEach(item->{
+                roles.add(item.getRoleId());
+            });
+        }
+        tokenInfoVO.setRoles(roles);
         //登录日志
         LogLogin logLogin = new LogLogin();
         BeanUtils.copyProperties(tokenInfoVO, logLogin);
@@ -241,20 +261,39 @@ public class UserService {
     }
 
     /**
-     * 用户select form 列表查询
+     * 按单位查询用户select form 列表
      * @param queryWrapper
      * @return
      */
     public List<FormSelectVO> selectDeptListForFormSelect (Wrapper<BaseModel<?>> queryWrapper){
         List<BaseModel<?>> dList = cbDataService.selectList(new UserDeptInfo(),queryWrapper);
-        List<FormSelectVO> formSelectVOs = new ArrayList<FormSelectVO>() {
-        };
+        List<FormSelectVO> formSelectVOs = new ArrayList<FormSelectVO>();
         if(dList!=null){
             dList.forEach(item->{
                 UserDeptInfo userDeptInfo = (UserDeptInfo)item;
                 FormSelectVO formSelectVO = new FormSelectVO();
                 formSelectVO.setLabel(userDeptInfo.getName());
                 formSelectVO.setValue(userDeptInfo.getId());
+                formSelectVOs.add(formSelectVO);
+            });
+        }
+        return formSelectVOs;
+    }
+
+
+    /**
+     * 按角色查询用户select form 列表
+     * @param userId
+     * @return
+     */
+    public List<FormSelectVO> selectRoleListForFormSelect(String roldId){
+        List<UserInfo> userInfos =  userInfoMapper.selectUserListByRole(roldId);
+        List<FormSelectVO> formSelectVOs = new ArrayList<FormSelectVO>();
+        if(userInfos!=null){
+            userInfos.forEach(item->{
+                FormSelectVO formSelectVO=new FormSelectVO();
+                formSelectVO.setLabel(item.getName());
+                formSelectVO.setValue(item.getId());
                 formSelectVOs.add(formSelectVO);
             });
         }

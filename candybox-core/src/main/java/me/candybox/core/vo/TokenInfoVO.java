@@ -22,7 +22,9 @@ public class TokenInfoVO {
     private String deptName;
     @ApiModelProperty(value = "token类型")
     private String tokenType;
-    @ApiModelProperty(value = "oauth2认证的scopes")
+    @ApiModelProperty(value = "登录用户角色id")
+    private Set<String> roles;
+    @ApiModelProperty(value = "oauth2认证用户scopes（角色tag）")
     private Set<String> scopes;
 
 }
